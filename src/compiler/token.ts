@@ -1,42 +1,42 @@
-// export enum TokenType {
-// 	OP1 = "unaryOperator",
-// 	OP2 = "binaryOperator",
-// 	OP3 = "ternaryOperator",
-// 	VAR = "variableName",
-// 	FUN = "functionName",
-// 	FDC = "functionDeclaration",
-// 	EOL = "endOfLine",
-// 	PUN = "punctuation",
-// 	NUMBER = "number",
-// 	STRING = "string",
-// }
 export enum TokenType {
-	OP1,
-	OP2,
-	OP3,
-	VAR,
-	FUN,
-	FDC,
-	EOL,
-	PUN,
-	NUMBER,
-	STRING,
+	OP1, // = "unary",
+	OP2, // = "binary",
+	OP3, // = "ternary",
+	LPAREN, // "paren1",
+	RPAREN, // "paren2",
+	LBRACK, //= "bracket1",
+	RBRACK, // = "bracket2",
+	LBRACE, // = "brace1",
+	RBRACE, //= "brace2",
+	VAR, // = "variableName",
+	SET, // = "setName",
+	FUN, //= "functionCall",
+	FDC, // = "functionDeclare",
+	STRUCT, // = "structure",
+	EOL, // = "endOfLine",
+	PUN, // = "punctuation",
+	COMMA, // = "comma",
+	NUMBER, // = "number",
+	STRING, // = "string",
 }
 export enum Token {
 	LPAREN = "(", // = (,
 	RPAREN = ")", // = ),
 	LBRACE = "{", // = {
 	RBRACE = "}", // = },
-	LBRACK = "]", // = [,
-	RBRACK = "[", // = ],
+	LBRACK = "[", // = [,
+	RBRACK = "]", // = ],
 	DOT = ".", // = .
 	COMMA = ",", // = ,
 	BANG = "!", // = !
 	SEMICOLON = ";", // = ;
+	COLON = ":", // = ;
+	VBAR = "|",
 
 	EQUAL = "equal", // =
 	PLUS = "add", // +
 	MINUS = "sub", // -
+	NEG = "neg",
 	STAR = "mul", // *
 	CARET = "pow", // ^
 	SLASH = "div", // /
@@ -66,6 +66,14 @@ export enum Token {
 	XNOR = "xnor", // xnor
 	IFF = "iff", // iff
 	IN = "in", // in
+	WHERE = "where", // &
+	N = "N", // natural numbers
+	Z = "Z", // integers
+	R = "R", // reals
+
+	SET = "set", // set
+	ARRAY = "array", // set
+	MATRIX = "matrix", // set
 
 	EOF = "eof", // eof
 	NULL = "null", // null
@@ -80,9 +88,3 @@ export type TokenObj = {
 	args?: any;
 	body?: any;
 };
-// [ { token: 'f', type: 5, args: [ { token: 'x', type: 3 } ] },
-//   { token: 'equal', type: 1, args: 2 },
-//   { token: 'x', type: 3 },
-//   { token: 'pow', type: 1, args: 13 },
-//   { token: 2, type: 8 },
-//   { token: ';', type: 6 } ]

@@ -1,6 +1,7 @@
 /* prettier-ignore */
 const charEncode = {
-	" ": -1 , "\\n": -1, "\\t": -1,
+	" ": -1, "\\n": -1, "\\t": -1,
+	"\\r":-1,
 	"!": 33 , '"': 34  , "#":35   ,
 	"$": 36 , "%": 37  , "&": 38  ,
 	"'": 39 , "(":40   , ")": 41  ,
@@ -41,5 +42,3 @@ export const encode = (char: string): number => {
 	}
 	return charEncode[char];
 };
-
-

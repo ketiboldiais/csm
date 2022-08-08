@@ -1,15 +1,25 @@
 {
-  "name": "csm",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "tslib": "^2.4.0"
-  }
+	"name": "csm",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"typings": "dist/index.d.ts",
+	"scripts": {
+		"clean": "rm -rf ./dist/",
+		"build": "rollup -c"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"esbuild": "^0.14.53",
+		"rollup": "^2.77.2",
+		"rollup-plugin-dts": "^4.2.2",
+		"rollup-plugin-esbuild": "^4.9.1",
+		"tslib": "^2.4.0"
+	},
+	"peerDependencies": {
+		"typescript": "^4.7.4"
+	}
 }

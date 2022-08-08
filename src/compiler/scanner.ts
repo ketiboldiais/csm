@@ -1,20 +1,32 @@
 import { TokenType } from "./token";
 import { Token } from "./token";
 import { TokenObj } from "./token";
-import { encode } from "./encode";
+import { encode } from "../struct/encode";
 
-export class Scanner {
+export type Scan = {
+	tokens: TokenObj[];
+	containsArrays: boolean;
+	containsSets: boolean;
+};
+
+export class SCANNER {
 	private current_lexeme: string;
 	private cursor: number;
 	private tokens: TokenObj[];
 	private length: number;
+	parens: number[];
+	brackets: number[];
+	braces: number[];
 	constructor() {
 		this.current_lexeme;
 		this.cursor = 0;
 		this.length;
 		this.tokens = [];
+		this.parens = [0, 0];
+		this.brackets = [0, 0];
+		this.braces = [0, 0];
 	}
-	scan(source: string) {
+	scan(source: string): Scan {
 		this.current_lexeme = source;
 		this.length = source.length;
 		let token: TokenObj;
@@ -31,28 +43,37 @@ export class Scanner {
 						token = this.string();
 						break;
 					case "(":
-						token = this.makeToken(Token.LPAREN, TokenType.PUN);
+						this.parens[0] += 1;
+						token = this.makeToken(Token.LPAREN, TokenType.LPAREN);
 						break;
 					case ")":
-						token = this.makeToken(Token.RPAREN, TokenType.PUN);
+						this.parens[1] += 1;
+						token = this.makeToken(Token.RPAREN, TokenType.RPAREN);
 						break;
 					case "{":
-						token = this.makeToken(Token.LBRACE, TokenType.PUN);
+						this.braces[0] += 1;
+						token = this.makeToken(Token.LBRACE, TokenType.LBRACE);
 						break;
 					case "}":
-						token = this.makeToken(Token.RBRACE, TokenType.PUN);
+						this.braces[1] += 1;
+						token = this.makeToken(Token.RBRACE, TokenType.RBRACE);
 						break;
 					case "[":
-						token = this.makeToken(Token.LBRACK, TokenType.PUN);
+						this.brackets[0] += 1;
+						token = this.makeToken(Token.LBRACK, TokenType.LBRACK);
 						break;
 					case "]":
-						token = this.makeToken(Token.RBRACK, TokenType.PUN);
+						this.brackets[1] += 1;
+						token = this.makeToken(Token.RBRACK, TokenType.RBRACK);
 						break;
 					case ".":
 						token = this.makeToken(Token.DOT, TokenType.PUN);
 						break;
 					case ",":
-						token = this.makeToken(Token.COMMA, TokenType.PUN);
+						token = this.makeToken(Token.COMMA, TokenType.COMMA);
+						break;
+					case "|":
+						token = this.makeToken(Token.VBAR, TokenType.PUN);
 						break;
 					case "!":
 						token = this.match("=")
@@ -111,14 +132,51 @@ export class Scanner {
 						token = this.makeToken(Token.HASH, TokenType.OP2, 12);
 						break;
 					default:
-						throw new Error(
-							`Unrecognized character ${this.current_lexeme}`,
-						);
+						continue;
 				}
 			}
 			this.tokens.push(token);
 		}
-		return this.tokens;
+		enum Imbalanced {
+			parens,
+			braces,
+			brackets,
+			none,
+		}
+		let parensAreZero = this.parens[1] - this.parens[0] === 0;
+		let bracketsAreZero = this.brackets[1] - this.brackets[0] === 0;
+		let bracesAreZero = this.braces[1] - this.braces[0] === 0;
+
+		let balance = parensAreZero
+			? bracesAreZero
+				? bracketsAreZero
+					? Imbalanced.none
+					: Imbalanced.brackets
+				: Imbalanced.braces
+			: Imbalanced.parens;
+
+		switch (balance) {
+			case Imbalanced.parens:
+				throw new Error("Missing parentheses.");
+			case Imbalanced.braces:
+				throw new Error("Missing braces.");
+			case Imbalanced.brackets:
+				throw new Error("Missing brackets.");
+			case Imbalanced.none:
+				break;
+			default:
+				throw new Error("Something's not right. Problem in switch.");
+		}
+
+		let containsArrays = this.brackets[0] > 0;
+		let containsSets = this.braces[1] > 0;
+
+		// this.tokens.push(this.makeToken(Token.SEMICOLON, TokenType.EOL));
+		return {
+			tokens: this.tokens,
+			containsArrays,
+			containsSets,
+		};
 	}
 	private string() {
 		let value = "";
@@ -173,6 +231,10 @@ export class Scanner {
 			}
 		}
 		this.advance();
+		if (this.peekNext() === "=") {
+			type = TokenType.FDC;
+			this.cursor += 2;
+		}
 		return this.makeToken(name, type, parameters);
 	}
 	private name() {
@@ -237,5 +299,9 @@ export class Scanner {
 	}
 }
 
-// const scanner = new Scanner().scan(`f(x) = x^2`);
-// console.log(scanner);
+// const s = new SCANNER().scan(`
+// 	[1,2,3] + [1,2,3];
+
+// `);
+
+// console.log(s);
